@@ -1,0 +1,132 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class controller : MonoBehaviour
+{
+    public GameManagerLevel manager;
+    public float speed;
+    public float turnSpeed;
+    public float gravityMultiplier;
+    public ParticleSystem dust;
+    public ParticleSystem dust2;
+    public ParticleSystem dust3;
+    public ParticleSystem exaust;
+    public GameObject deathParticals;
+    private Vector3 spawn;
+
+    
+
+    
+   
+    
+
+
+
+
+    private Rigidbody rb;
+
+    void Start()
+    {
+        spawn = transform.position;
+        rb = GetComponent<Rigidbody>();  
+        manager = manager.GetComponent<GameManagerLevel>();   
+    }
+
+
+    // it's not neat but it works could "void move" however dont want to mess with what works 
+    void FixedUpdate()
+    {
+    // forward Input
+        if (Input.GetKey(KeyCode.W))
+        {    
+            rb.AddRelativeForce(new Vector3(Vector3.forward.x, 0, Vector3.forward.z) * speed * 10);
+        }
+    // backward Input
+        else if (Input.GetKey(KeyCode.S))
+        {
+            rb.AddRelativeForce(new Vector3(Vector3.forward.x, 0, Vector3.forward.z) * -speed * 10);
+        }
+    // right Input
+        if (Input.GetKey(KeyCode.D))
+        {
+            rb.AddTorque(Vector3.up * turnSpeed * 10);
+        }
+    //left Input
+        else if (Input.GetKey(KeyCode.A))
+        {
+            rb.AddTorque(-Vector3.up * turnSpeed * 10);
+        }
+
+        rb.AddForce(Vector3.down * gravityMultiplier * 10);
+    //move forward the direction the object is facing
+        Vector3 localVelocity = transform.InverseTransformDirection(rb.velocity);
+        localVelocity.x = 0;
+        rb.velocity = transform.TransformDirection(localVelocity);
+        
+         if (Input.GetKey(KeyCode.W))
+         CreateDust();
+
+         if (Input.GetKey(KeyCode.W))
+         CreateDust3(); 
+
+         if (Input.GetKey(KeyCode.W))
+         CreateExaust(); 
+ 
+
+         if (Input.GetKey(KeyCode.S))
+         CreateDust2(); 
+         
+    }
+
+    
+      void CreateDust()
+    {
+        dust.Play();
+    }
+
+     void CreateDust2()
+    {
+        dust2.Play();
+    }
+
+         void CreateDust3()
+    {
+        dust3.Play();
+    }
+
+    void CreateExaust()
+    {
+        exaust.Play();
+    }
+
+      void OnTriggerEnter(Collider other)
+     {
+          if (other.transform.tag == "goal")
+        {
+            manager.CompleteLevel();
+
+        }
+     }
+
+     void OnCollisionEnter(Collision other)
+    {
+        
+        
+        if (other.transform.tag == "Enemy")
+        { 
+            
+             Instantiate(deathParticals, transform.position, Quaternion.identity);
+            transform.position = spawn;
+            
+
+            
+        }
+
+      
+     
+     }
+    
+}
+    
+
