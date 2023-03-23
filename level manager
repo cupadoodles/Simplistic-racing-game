@@ -1,0 +1,78 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.SceneManagement;
+public class GameManagerLevel : MonoBehaviour
+{
+
+    public  int currentScore;
+    public  int highscore;
+    public  int currentLevel = 0;
+    public  int unlockedLevel;
+
+
+    public Rect timerRect;
+    public float startTime;
+    private string currentTime;
+
+    public GUISkin skin;
+
+    
+
+
+
+    void Update()
+    {
+        startTime -= Time.deltaTime;
+        currentTime = string.Format("{0:0.0}", startTime);
+        if (startTime <= 0)
+        {
+            startTime = 0;
+            SceneManager.LoadScene(3); 
+        }
+        
+        
+    }
+
+
+    void Start ()
+    {
+
+        if (PlayerPrefs.GetInt("Level Completed") > 0)
+        {
+            currentLevel = PlayerPrefs.GetInt("Level Completed");
+        } 
+        else 
+        {
+            currentLevel = 0;
+        }
+
+    }
+
+    public void CompleteLevel ()
+    {
+        if (currentLevel < 1)
+        {
+        currentLevel += 1;
+        PlayerPrefs.SetInt("Level Completed", currentLevel);
+        PlayerPrefs.GetInt("Level Completed");
+        Application.LoadLevel(currentLevel);
+        } 
+        else 
+        {
+            SceneManager.LoadScene(4);
+            print ("you win!!!!!!");
+        }
+        
+    }
+    
+
+
+  void OnGUI()
+    {
+        GUI.skin = skin;
+        GUI.Label (timerRect, currentTime);
+    }
+
+
+}
